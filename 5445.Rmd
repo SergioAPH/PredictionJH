@@ -99,7 +99,7 @@ caret::confusionMatrix(testing$classe, GBMpr)
 Random forest seems to be the more accurate model for prediction.This model was used to answer the quiz.
 
 
-As for the data set; the exercise was performed by only 6 different individuals, which means there may be some bias when it comes down to using the methods of this document. Nevertheless, the aim of the document was not to find the easiest to interpret model. Addiotionally testing of the prediction model could help assess the true out of sample error; a different preprocess method may be .
+As for the data set; the exercise was performed by only 6 different individuals, which means there may be some bias when it comes down to using the methods of this document. Nevertheless, the aim of the document was not to find the easiest to interpret model. Addiotionally testing of the prediction model could help assess the true out of sample error.
 
 ## Bibliography
 Velloso, E., Bulling, A., & Gellersen, H. (2013). MotionMA: Motion Modelling and Analysis by Demonstration. In Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (CHI '13) (pp. 1309-1318). ACM. DOI: 10.1145/2470654.2466171
