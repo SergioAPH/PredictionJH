@@ -1,0 +1,116 @@
+---
+title: "Course Project: Prediction"
+author: "Sergio Partida"
+date: "April 20, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Summary
+A data set that recorded measures from a weight lifting exercise was used to create a prediction model on the quality of the exercise. Trees, Random Forests, and Gradient Boosting were used to create an accurate combined predictor. 
+
+## Introduction
+
+6 participants were instructed to perform a particular exercise; there were 5 different modes in which the exercise was performed; measures of 3 accelerometers were recorded (Velloso et al, 2013). Velloso et al, recorded the data and created a prediction model capable of diferentiating between the 5 qualities (2013). This document aims at reporting the creation of a highly accurate prediction model capable of differentiating between the 5 different modes using the dataset from Velloso et al.
+
+## Loading and Preprocessing the data
+
+
+### Downloading and Tidying the Data Set
+```{r cache=TRUE, include=FALSE}
+library(caret)
+library(dplyr)
+library(data.table)
+library(rpart)
+```
+
+
+```{r}
+fileurl<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+download.file(fileurl, "./data.csv")
+df<-read.csv("data.csv", na.strings = c("NA", ""))
+```
+The data set dimensions:
+```{r}
+dim(df)
+```
+As Velloso et al point out, there exist derived features that get calculated on certain rows (2013); these otherwise appear as NAs strings. 
+
+```{r}
+df<-df[,!is.na(df[1,])]
+```
+
+Time-related variable, the index of the data and, subject, compromise the first 7 columns of the dataset. Those will be ignored.
+```{r}
+df<-data.frame(df[,8:60])
+```
+## Prediction model Creation
+
+### Partitioning
+
+The data will be partitioned according to the guidelines given by the course.
+
+
+```{r, cache=TRUE}
+set.seed(54321)
+trainIndex<-createDataPartition(df$classe, p=.6, list=FALSE)
+training<-df[trainIndex, ]
+testing<-df[-trainIndex, ]
+```
+
+### Random Forests
+
+
+After tidying the data there are  52 potential variables to consider for the prediction model.
+Given that the aim of the document is accuracy; Random Forests is a good choice to attain it. 
+
+```{r RF, cache=TRUE}
+set.seed(54321)
+RFmodel<-train(classe~., data=training, method="rf")
+```
+
+#### Random Forest Predictions
+```{r}
+RFpr<-predict(RFmodel, testing[,-53])
+caret::confusionMatrix(testing$classe, RFpr)
+```
+
+
+### Gradient Boosting
+
+For similar reasons for Random Forests, Gradient Boosting is also considered as another method for prediction.
+```{r GBM, cache=TRUE}
+set.seed(54321)
+GBMmodel<-train(classe~., data=training, method="gbm", verbose=FALSE)
+```
+
+
+
+#### Gradient Boosting Predictions
+```{r}
+GBMpr<-predict(GBMmodel, testing[,-53])
+caret::confusionMatrix(testing$classe, GBMpr)
+```
+
+### Discussion
+
+Random forest seems to be the more accurate model for prediction.This model was used to answer the quiz.
+
+
+As for the data set; the exercise was performed by only 6 different individuals, which means there may be some bias when it comes down to using the methods of this document. Nevertheless, the aim of the document was not to find the easiest to interpret model. Addiotionally testing of the prediction model could help assess the true out of sample error; a different preprocess method may be .
+
+## Bibliography
+Velloso, E., Bulling, A., & Gellersen, H. (2013). MotionMA: Motion Modelling and Analysis by Demonstration. In Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (CHI '13) (pp. 1309-1318). ACM. DOI: 10.1145/2470654.2466171
+## Appendix
+```{r}
+summary(RFmodel)
+```
+
+```{r}
+summary(GBMmodel)
+```
+
+
+
